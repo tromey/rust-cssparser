@@ -494,7 +494,7 @@ fn line_numbers() {
     assert_eq!(input.next_including_whitespace(), Ok(&Token::WhiteSpace("\r\n\n")));
     assert_eq!(input.current_source_location(), SourceLocation { line: 4, column: 0 });
 
-    assert_eq!(state.source_location(), SourceLocation { line: 2, column: 5 });
+    assert_eq!(input.source_location_at_state(&state), SourceLocation { line: 2, column: 5 });
 
     assert_eq!(input.next_including_whitespace(), Ok(&Token::UnquotedUrl("u".into())));
     assert_eq!(input.current_source_location(), SourceLocation { line: 6, column: 1 });

@@ -295,10 +295,32 @@ impl<'a> Tokenizer<'a> {
     }
 
     #[inline]
+    fn column_at(&self, line_start_position: usize, position: usize) -> u32 {
+        let mut column = 0;
+        for i in line_start_position..position {
+            let b = self.input.as_bytes()[i];
+            // Count columns as UTF-16.
+            if (b & 0xF0) == 0xF0 {
+                column += 2;
+            } else if (b & 0xC0) != 0x80 {
+                column += 1;
+            }
+        }
+        column
+    }
+
+    #[inline]
     pub fn current_source_location(&self) -> SourceLocation {
         SourceLocation {
             line: self.current_line_number,
-            column: (self.position - self.current_line_start_position) as u32,
+            column: self.column_at(self.current_line_start_position, self.position)
+        }
+    }
+
+    pub fn source_location_at_state(&self, state: &ParserState) -> SourceLocation {
+        SourceLocation {
+            line: state.current_line_number,
+            column: self.column_at(state.current_line_start_position, state.position)
         }
     }
 

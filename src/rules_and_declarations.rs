@@ -259,7 +259,7 @@ where P: DeclarationParser<'i, Declaration = I, Error = E> +
                     }.map_err(|e| PreciseParseError {
                         error: e,
                         slice: self.input.slice_from(start.position()),
-                        location: start.source_location(),
+                        location: self.input.source_location_at_state(&start),
                     }))
                 }
                 Ok(Err(name)) => {
@@ -272,7 +272,7 @@ where P: DeclarationParser<'i, Declaration = I, Error = E> +
                                 .map_err(|e| PreciseParseError {
                                     error: e,
                                     slice: self.input.slice_from(start.position()),
-                                    location: start.source_location(),
+                                    location: self.input.source_location_at_state(&start),
                                 }))
                 }
             }
@@ -380,7 +380,7 @@ where P: QualifiedRuleParser<'i, QualifiedRule = R, Error = E> +
                             .map_err(|e| PreciseParseError {
                                 error: e,
                                 slice: self.input.slice_from(start.position()),
-                                location: start.source_location(),
+                                location: self.input.source_location_at_state(&start),
                             }))
             }
         }
@@ -466,7 +466,7 @@ fn parse_at_rule<'i: 't, 't, P, E>(start: &ParserState, name: CowRcStr<'i>,
                 Ok(&Token::CurlyBracketBlock) => Err(PreciseParseError {
                     error: ParseError::Basic(BasicParseError::UnexpectedToken(Token::CurlyBracketBlock)),
                     slice: input.slice_from(start.position()),
-                    location: start.source_location(),
+                    location: input.source_location_at_state(&start),
                 }),
                 Ok(_) => unreachable!()
             }
@@ -479,18 +479,18 @@ fn parse_at_rule<'i: 't, 't, P, E>(start: &ParserState, name: CowRcStr<'i>,
                         .map_err(|e| PreciseParseError {
                             error: e,
                             slice: input.slice_from(start.position()),
-                            location: start.source_location(),
+                            location: input.source_location_at_state(&start),
                         })
                 }
                 Ok(&Token::Semicolon) => Err(PreciseParseError {
                     error: ParseError::Basic(BasicParseError::UnexpectedToken(Token::Semicolon)),
                     slice: input.slice_from(start.position()),
-                    location: start.source_location(),
+                    location: input.source_location_at_state(&start),
                 }),
                 Err(e) => Err(PreciseParseError {
                     error: ParseError::Basic(e),
                     slice: input.slice_from(start.position()),
-                    location: start.source_location(),
+                    location: input.source_location_at_state(&start),
                 }),
                 Ok(_) => unreachable!()
             }
@@ -504,7 +504,7 @@ fn parse_at_rule<'i: 't, 't, P, E>(start: &ParserState, name: CowRcStr<'i>,
                         .map_err(|e| PreciseParseError {
                             error: e,
                             slice: input.slice_from(start.position()),
-                            location: start.source_location(),
+                            location: input.source_location_at_state(&start),
                         })
                 }
                 _ => unreachable!()
@@ -519,7 +519,7 @@ fn parse_at_rule<'i: 't, 't, P, E>(start: &ParserState, name: CowRcStr<'i>,
             Err(PreciseParseError {
                 error: error,
                 slice: input.slice(start.position()..end_position),
-                location: start.source_location(),
+                location: input.source_location_at_state(&start),
             })
         }
     }
